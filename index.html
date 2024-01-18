@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOAP</title>
+</head>
+<body>
+
+    <h1>SOAP</h1>
+
+    <form id="soapForm">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br>
+
+        <label for="ticketIds">Ticket IDs:</label>
+        <input type="text" id="ticketIds" name="ticketIds" required><br>
+
+        <label for="incidentClass">Class:</label>
+        <input type="text" id="incidentClass" name="incidentClass" required><br>
+
+        <label for="ownerGroup">Owner Group:</label>
+        <input type="text" id="ownerGroup" name="ownerGroup" required><br>
+
+        <label for="owner">Owner:</label>
+        <input type="text" id="owner" name="owner" required><br>
+
+        <label for="description">Worklog Description:</label>
+        <input type="text" id="description" name="description" required><br>
+
+        <label for="longDescription">Worklog Long Description:</label>
+        <input type="text" id="longDescription" name="longDescription" required><br>
+
+        <label for="logType">Worklog Type:</label>
+        <input type="text" id="logType" name="logType" required><br>
+
+        <label for="failureCode">Failure Code:</label>
+        <input type="text" id="failureCode" name="failureCode" required><br>
+
+        <label for="fr2CodeLongDescription">Resolution:</label>
+        <input type="text" id="fr2CodeLongDescription" name="fr2CodeLongDescription" required><br>
+
+        <label for="itdResCode">Resolution Code:</label>
+        <input type="text" id="itdResCode" name="itdResCode" required><br>
+
+        <label for="status">Status:</label>
+        <input type="text" id="status" name="status" required><br>
+
+        <button type="button" onclick="sendSoapRequest()">Send</button>
+    </form>
+
+</body>
+</html>
