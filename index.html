@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SOAP</title>
+    <title>Maximo SOAP Client</title>
 </head>
 <body>
 
-    <h1>SOAP</h1>
+    <h1>Maximo SOAP Client</h1>
 
     <form id="soapForm">
         <label for="username">Username:</label>
@@ -16,10 +16,10 @@
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required><br>
 
-        <label for="ticketIds">Ticket IDs:</label>
+        <label for="ticketIds">Ticket IDs (comma-separated):</label>
         <input type="text" id="ticketIds" name="ticketIds" required><br>
 
-        <label for="incidentClass">Class:</label>
+        <label for="incidentClass">Incident Class:</label>
         <input type="text" id="incidentClass" name="incidentClass" required><br>
 
         <label for="ownerGroup">Owner Group:</label>
@@ -40,17 +40,92 @@
         <label for="failureCode">Failure Code:</label>
         <input type="text" id="failureCode" name="failureCode" required><br>
 
-        <label for="fr2CodeLongDescription">Resolution:</label>
+        <label for="fr2CodeLongDescription">FR2 Code Long Description:</label>
         <input type="text" id="fr2CodeLongDescription" name="fr2CodeLongDescription" required><br>
 
-        <label for="itdResCode">Resolution Code:</label>
+        <label for="itdResCode">ITD Res Code:</label>
         <input type="text" id="itdResCode" name="itdResCode" required><br>
 
         <label for="status">Status:</label>
         <input type="text" id="status" name="status" required><br>
 
-        <button type="button" onclick="sendSoapRequest()">Send</button>
+        <button type="button" onclick="sendSoapRequest()">Send SOAP Request</button>
     </form>
+
+    <script>
+        function sendSoapRequest() {
+            var username = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+
+            var ticketIdsInput = document.getElementById('ticketIds');
+            var ticketIds = ticketIdsInput.value.split(',').map(function(item) {
+                return item.trim();
+            });
+
+            var incidentClass = document.getElementById('incidentClass').value;
+            var ownerGroup = document.getElementById('ownerGroup').value;
+            var owner = document.getElementById('owner').value;
+            var description = document.getElementById('description').value;
+            var longDescription = document.getElementById('longDescription').value;
+            var logType = document.getElementById('logType').value;
+            var failureCode = document.getElementById('failureCode').value;
+            var fr2CodeLongDescription = document.getElementById('fr2CodeLongDescription').value;
+            var itdResCode = document.getElementById('itdResCode').value;
+            var status = document.getElementById('status').value;
+
+            var soapRequests = ticketIds.map(function(ticketId) {
+                return `
+                    <soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:max="http://www.maximo.com/maximo">
+                        <soap:Header>
+                            <max:authentication>
+                                <max:username>${username}</max:username>
+                                <max:password>${password}</max:password>
+                            </max:authentication>
+                        </soap:Header>
+                        <soap:Body>
+                            <max:UpdateMXISINCIDENT>
+                                <max:MXISINCIDENTSet>
+                                    <max:INCIDENT>
+                                        <max:TICKETID>${ticketId}</max:TICKETID>
+                                        <max:CLASS>${incidentClass}</max:CLASS>
+                                        <max:OWNERGROUP>${ownerGroup}</max:OWNERGROUP>
+                                        <max:OWNER>${owner}</max:OWNER>
+                                        <max:WORKLOG>
+                                            <max:DESCRIPTION>${description}</max:DESCRIPTION>
+                                            <max:DESCRIPTION_LONGDESCRIPTION>${longDescription}</max:DESCRIPTION_LONGDESCRIPTION>
+                                            <max:LOGTYPE>${logType}</max:LOGTYPE>
+                                        </max:WORKLOG>
+                                        <max:FAILURECODE>${failureCode}</max:FAILURECODE>
+                                        <max:FR2CODE_LONGDESCRIPTION>${fr2CodeLongDescription}</max:FR2CODE_LONGDESCRIPTION>
+                                        <max:ITDRESCODE>${itdResCode}</max:ITDRESCODE>
+                                        <max:STATUS>${status}</max:STATUS>
+                                    </max:INCIDENT>
+                                </max:MXISINCIDENTSet>
+                            </max:UpdateMXISINCIDENT>
+                        </soap:Body>
+                    </soap:Envelope>
+                `;
+            });
+
+            soapRequests.forEach(function(soapRequest) {
+                var xhr = new XMLHttpRequest();
+                var soapEndpoint = "https://esls1uat.icdeu.kyndryl.com/meaweb/services/MXISINCIDENT";
+
+                xhr.open("POST", soapEndpoint, true);
+                xhr.setRequestHeader("Content-Type", "application/soap+xml;charset=UTF-8");
+                xhr.setRequestHeader("SOAPAction", "UpdateMXISINCIDENT");
+                xhr.setRequestHeader("Authorization", "Basic " + btoa(username + ":" + password));
+
+                xhr.send(soapRequest);
+
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        alert("SOAP Response for Ticket ID " + ticketId + ":\n\n" + xhr.responseText);
+                    }
+                };
+            });
+        }
+    </script>
 
 </body>
 </html>
